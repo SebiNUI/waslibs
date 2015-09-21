@@ -29,7 +29,7 @@ namespace AppStudio.DataProviders.Facebook
 
             var settings = new HttpRequestSettings
             {
-                RequestedUri = new Uri(string.Format("{0}/{1}/posts?&access_token={2}|{3}&fields=id,message,from,created_time,link,full_picture", BaseUrl, config.UserId, _tokens.AppId, _tokens.AppSecret), UriKind.Absolute)
+                RequestedUri = new Uri(string.Format("{0}/{1}/posts?&access_token={2}|{3}&fields=id,message,from,created_time,link,full_picture,source", BaseUrl, config.UserId, _tokens.AppId, _tokens.AppSecret), UriKind.Absolute)
             };
 
             HttpRequestResult result = await HttpRequest.DownloadAsync(settings);

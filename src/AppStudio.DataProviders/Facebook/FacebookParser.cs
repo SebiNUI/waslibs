@@ -12,11 +12,6 @@ namespace AppStudio.DataProviders.Facebook
     {
         public IEnumerable<FacebookSchema> Parse(string data)
         {
-            if (string.IsNullOrEmpty(data))
-            {
-                return null;
-            }
-
             Collection<FacebookSchema> resultToReturn = new Collection<FacebookSchema>();
             var searchList = JsonConvert.DeserializeObject<FacebookGraphResponse>(data);
             foreach (var i in searchList.data.Where(w => !string.IsNullOrEmpty(w.message) && !string.IsNullOrEmpty(w.link)).OrderByDescending(o => o.created_time))
@@ -29,14 +24,17 @@ namespace AppStudio.DataProviders.Facebook
                     Title = i.message.DecodeHtml(),
                     Summary = i.message.DecodeHtml(),
                     Content = i.message,
-                    ImageUrl = ConvertImageUrlFromParameter(i.full_picture),
-                    FeedUrl = i.link
+                    ImageUrl = i.picture,
+                    FullImageUrl = i.full_picture,
+                    FeedUrl = i.link,
+                    Source = i.source
                 };
                 resultToReturn.Add(item);
             }
 
             return resultToReturn;
         }
+
 
         private static string ConvertImageUrlFromParameter(string imageUrl)
         {
@@ -85,7 +83,9 @@ namespace AppStudio.DataProviders.Facebook
         public DateTime created_time { get; set; }
         public DateTime updated_time { get; set; }
         public string message { get; set; }
+        public string picture { get; set; }
         public string full_picture { get; set; }
         public string link { get; set; }
+        public string source { get; set; }
     }
 }
