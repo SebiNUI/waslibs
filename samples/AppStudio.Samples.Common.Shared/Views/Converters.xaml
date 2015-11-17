@@ -10,7 +10,7 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converter:StringVisibilityConverter x:Key="StringVisibilityConverter"/>
+        <converter:StringVisibilityConverter x:Key="StringVisibilityConverter"/>        
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer>
@@ -37,6 +37,5 @@
                 <TextBlock Text="This content text is visible TextBox is not empty." Visibility="{Binding StringValue, Converter={StaticResource StringVisibilityConverter}, Mode=OneWay}" Margin="0,12,0,0"/>
             </StackPanel>
         </ScrollViewer>
-
     </Grid>
 </Page>

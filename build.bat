@@ -1,2 +1,4 @@
 call "%ProgramFiles(x86)%\Microsoft Visual Studio 14.0\Common7\Tools\VsMSBuildCmd.bat"
-msbuild /p:Configuration=Release %1 %2
+.nuget\nuget.exe restore waslibs.sln
+msbuild /p:Configuration=Release waslibs.sln
+git checkout .
