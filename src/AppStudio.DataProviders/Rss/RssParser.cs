@@ -70,7 +70,8 @@ namespace AppStudio.DataProviders.Rss
 
         internal protected static string ProcessHtmlSummary(string htmlContent)
         {
-            return htmlContent.DecodeHtml().Trim().Truncate(500).SanitizeString();
+            ////return htmlContent.DecodeHtml().Trim().Truncate(500).SanitizeString();
+            return htmlContent.DecodeHtml().Trim().SanitizeString();
         }
     }
 
