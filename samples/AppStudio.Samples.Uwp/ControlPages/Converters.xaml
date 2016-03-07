@@ -15,6 +15,8 @@
         <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converter:StringVisibilityConverter x:Key="StringVisibilityConverter"/>
         <converter:StringToSizeConverter x:Key="StringToSizeConverter"/>
+        <converter:BoolToSizeConverter x:Key="BoolToSizeConverter"/>
+        <converter:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
     </base:BaseControlPage.Resources>
     <Grid>
         <ScrollViewer>
@@ -44,6 +46,29 @@
                       Background="LightCyan" Margin="0,12,0,0">
                     <Image Source="{Binding StringToSizeImagePath}"/>
                 </Grid>
+                <TextBlock Text="BoolToSizeConverter" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" Margin="0,24,0,0"/>
+                <TextBlock Text="Image container grid has Height 0 if toggle false and Auto if true." Margin="0,12,0,0"/>
+                <ToggleSwitch IsOn="{Binding SecondBoolValue, Mode=TwoWay}" Margin="0,12,0,0" Width="100" Height="50"/>
+                <Grid Width="300"
+                      Height="{Binding SecondBoolValue, Converter={StaticResource BoolToSizeConverter}, Mode=OneWay}"
+                      HorizontalAlignment="Left"
+                      Background="LightCyan" Margin="0,12,0,0">
+                    <Image Source="{Binding StringToSizeImagePath}"/>
+                </Grid>
+                <TextBlock Text="CollectionVisibilityConverter" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" Margin="0,24,0,0"/>
+                <TextBlock Text="Add Items button will be visible if collection are empty, and clear items button will be visible if there are items in collection." Margin="0,12,0,0"/>
+                <TextBlock Text="Collection" Margin="0,12,0,0"/>
+                <ItemsControl ItemsSource="{Binding Collection}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Margin="6"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                    <Button Content="Add 5 Items to list." Command="{Binding AddItemsToCollection}" Visibility="{Binding Collection, Converter={StaticResource CollectionVisibilityConverter}, ConverterParameter=reverse}"/>
+                    <Button Content="Clear list." Command="{Binding ClearCollection}" Visibility="{Binding Collection, Converter={StaticResource CollectionVisibilityConverter}}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
