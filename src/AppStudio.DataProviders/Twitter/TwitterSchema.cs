@@ -18,5 +18,7 @@ namespace AppStudio.DataProviders.Twitter
         public string UserProfileImageUrl { get; set; }
 
         public string Url { get; set; }
+
+        public Uri ImageUrl { get; internal set; }
     }
 }

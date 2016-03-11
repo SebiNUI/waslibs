@@ -71,10 +71,16 @@ namespace AppStudio.DataProviders.Twitter
             }
             
             if (item.Entities?.Media?.Count > 0)
-            {
+            {     
                 foreach (TwitterMedia media in item.Entities.Media)
                 {
                     text = text.Replace(media.Url, string.Empty);
+
+                    if ((media.Type == "photo") && (tweet.ImageUrl == null))
+                    {
+                        tweet.ImageUrl = new Uri(media.MediaUrl);
+                    }
+                   
                 }
             }
 
