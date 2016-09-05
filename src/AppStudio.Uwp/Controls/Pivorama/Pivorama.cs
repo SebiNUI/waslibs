@@ -1,8 +1,12 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.Foundation;
+
+using AppStudio.Uwp.EventArguments;
 
 namespace AppStudio.Uwp.Controls
 {
@@ -19,7 +23,9 @@ namespace AppStudio.Uwp.Controls
         private Panel _panelContainer = null;
         private PivoramaPanel _panel = null;
 
-        private ScrollViewer _scrollViewer = null;
+        private Grid _arrows = null;
+        private Button _left = null;
+        private Button _right = null;
 
         private RectangleGeometry _clip = null;
 
@@ -28,6 +34,18 @@ namespace AppStudio.Uwp.Controls
         public Pivorama()
         {
             this.DefaultStyleKey = typeof(Pivorama);
+            this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            CreateFadeTimer();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DisposeFadeTimer();
         }
 
         protected override void OnApplyTemplate()
@@ -45,7 +63,9 @@ namespace AppStudio.Uwp.Controls
             _panelContainer = base.GetTemplateChild("panelContainer") as Panel;
             _panel = base.GetTemplateChild("panel") as PivoramaPanel;
 
-            _scrollViewer = base.GetTemplateChild("scrollViewer") as ScrollViewer;
+            _arrows = base.GetTemplateChild("arrows") as Grid;
+            _left = base.GetTemplateChild("left") as Button;
+            _right = base.GetTemplateChild("right") as Button;
 
             _clip = base.GetTemplateChild("clip") as RectangleGeometry;
 
@@ -57,20 +77,34 @@ namespace AppStudio.Uwp.Controls
             _panelContainer.ManipulationDelta += OnManipulationDelta;
             _panelContainer.ManipulationCompleted += OnManipulationCompleted;
             _panelContainer.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateInertia | ManipulationModes.System;
-            _panelContainer.PointerWheelChanged += OnPointerWheelChanged;
+
+            _frame.PointerMoved += OnPointerMoved;
+            _left.Click += OnLeftClick;
+            _right.Click += OnRightClick;
+            _left.PointerEntered += OnArrowPointerEntered;
+            _left.PointerExited += OnArrowPointerExited;
+            _right.PointerEntered += OnArrowPointerEntered;
+            _right.PointerExited += OnArrowPointerExited;
 
             _isInitialized = true;
+
+            this.ItemWidthEx = this.ItemWidth;
 
             this.SizeChanged += OnSizeChanged;
 
             base.OnApplyTemplate();
         }
 
-        private void OnSelectedIndexChanged(object sender, int index)
+        private void OnSelectedIndexChanged(object sender, IntEventArgs e)
         {
-            if (this.Index != index)
+            if (_panel.ItemsFitContent)
             {
-                this.Index = index - 1;
+                return;
+            }
+            
+            if (this.Index != e.Value)
+            {
+                this.Index = e.Value - 1;
                 this.AnimateNext(100);
             }
         }
@@ -85,7 +119,7 @@ namespace AppStudio.Uwp.Controls
         {
             if (this.FitToScreen)
             {
-                this.ItemWidthEx = this.ActualWidth;
+                this.ItemWidthEx = Math.Round(this.ActualWidth);
                 _headerContainer.Visibility = Visibility.Collapsed;
                 _tabsContainer.Visibility = Visibility.Visible;
             }

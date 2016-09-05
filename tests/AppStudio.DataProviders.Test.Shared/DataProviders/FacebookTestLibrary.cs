@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AppStudio.DataProviders.Exceptions;
 using AppStudio.DataProviders.Facebook;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using System;
 
 namespace AppStudio.DataProviders.Test.DataProviders
 {
@@ -111,6 +112,63 @@ namespace AppStudio.DataProviders.Test.DataProviders
             var dataProvider = new FacebookDataProvider(OAuthKeys.FacebookValidKeys);
 
             await ExceptionsAssert.ThrowsAsync<ParserNullException>(async () => await dataProvider.LoadDataAsync<FacebookSchema>(new FacebookDataConfig(), 20, null));
+        }
+
+        [TestMethod]
+        public async Task TestMaxRecords_Min()
+        {
+            int maxRecords = 1;
+            var config = new FacebookDataConfig
+            {
+                UserId = "8195378771",
+            };
+            var dataProvider = new FacebookDataProvider(OAuthKeys.FacebookValidKeys);
+            IEnumerable<FacebookSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.AreEqual(maxRecords, result.Count());
+        }
+
+        [TestMethod]
+        public async Task TestMaxRecords()
+        {
+            int maxRecords = 70;
+            var config = new FacebookDataConfig
+            {
+                UserId = "150135720497",
+            };
+            var dataProvider = new FacebookDataProvider(OAuthKeys.FacebookValidKeys);
+            IEnumerable<FacebookSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.IsTrue(result.Count() > 25);
+        }
+
+        [TestMethod]
+        public async Task LoadPaginationFacebook()
+        {
+            var config = new FacebookDataConfig
+            {
+                UserId = "8195378771",
+            };
+            var dataProvider = new FacebookDataProvider(OAuthKeys.FacebookValidKeys);
+            await dataProvider.LoadDataAsync(config, 5);
+
+            Assert.IsTrue(dataProvider.HasMoreItems);
+
+            IEnumerable<FacebookSchema> result = await dataProvider.LoadMoreDataAsync();
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Any());
+        }
+
+        [TestMethod]
+        public async Task LoadMoreDataInvalidOperationFacebook()
+        {
+            var config = new FacebookDataConfig
+            {
+                UserId = "8195378771",
+            };
+            var dataProvider = new FacebookDataProvider(OAuthKeys.FacebookValidKeys);
+            InvalidOperationException exception = await ExceptionsAssert.ThrowsAsync<InvalidOperationException>(async () => await dataProvider.LoadMoreDataAsync());
         }
     }
 }

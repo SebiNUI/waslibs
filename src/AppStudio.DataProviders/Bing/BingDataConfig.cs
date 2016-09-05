@@ -10,7 +10,8 @@ namespace AppStudio.DataProviders.Bing
     }
 
     public enum BingCountry
-    {
+    {      
+        [StringValue("")]None,
         [StringValue("ae")]UnitedArabEmirates,
         [StringValue("al")]Albania,
         [StringValue("am")]Armenia,
@@ -75,7 +76,7 @@ namespace AppStudio.DataProviders.Bing
         [StringValue("pl")]Poland,
         [StringValue("pk")]Pakistan,
         [StringValue("pr")]PuertoRico,
-        [StringValue("ru")]Portugal,
+        [StringValue("pt")]Portugal,
         [StringValue("py")]Paraguay,
         [StringValue("qa")]Qatar,
         [StringValue("ro")]Romania,

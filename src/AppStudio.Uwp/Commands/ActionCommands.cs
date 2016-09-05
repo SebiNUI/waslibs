@@ -12,29 +12,13 @@ namespace AppStudio.Uwp.Commands
     using AppStudio.Uwp.Navigation;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.ApplicationModel.Appointments;
-    using Windows.UI.Xaml;    /// <summary>
-                              /// This class defines commands used to implement the actions.
-                              /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1053:StaticHolderTypesShouldNotHaveConstructors", Justification = "This class needs to be instantiated from XAML.")]
-    public class ActionCommands
+    using Windows.UI.Xaml;
+    using Windows.System;
+    /// <summary>
+    /// This class defines commands used to implement the actions.
+    /// </summary>
+    public sealed class ActionCommands
     {
-        /// <summary>
-        /// Gets the command used to show an image.
-        /// </summary>
-        public static ICommand ShowImage
-        {
-            get
-            {
-                return new RelayCommand<string>(p =>
-                {
-                    if (!string.IsNullOrEmpty(p))
-                    {
-                        NavigationService.NavigateToPage("ImageViewer", p);
-                    }
-                });
-            }
-        }
-
         /// <summary>
         /// Gets the command used to send an email.
         /// </summary>
@@ -42,13 +26,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<string>(async p =>
+                return new RelayCommand<string>(async mail =>
                 {
-                    if (!string.IsNullOrEmpty(p))
+                    if (!string.IsNullOrEmpty(mail))
                     {
-                        await NavigationService.NavigateTo(new Uri(string.Format("mailto:{0}", p)));
+                        await Launcher.LaunchUriAsync(new Uri(string.Format("mailto:{0}", mail)));
                     }
-                });
+                }, (mail => !string.IsNullOrEmpty(mail)));
             }
         }
 
@@ -59,13 +43,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<string>(async p =>
+                return new RelayCommand<string>(async phone =>
                 {
-                    if (!string.IsNullOrEmpty(p))
+                    if (!string.IsNullOrEmpty(phone))
                     {
-                        await NavigationService.NavigateTo(new Uri(string.Format("tel:{0}", p)));
+                        await Launcher.LaunchUriAsync(new Uri(string.Format("tel:{0}", phone)));
                     }
-                });
+                }, (phone => !string.IsNullOrEmpty(phone)));
             }
         }
 
@@ -76,13 +60,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<string>(async p =>
+                return new RelayCommand<string>(async url =>
                 {
-                    if (!string.IsNullOrEmpty(p))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        await NavigationService.NavigateTo(new Uri(p));
+                        await Launcher.LaunchUriAsync(new Uri(url));
                     }
-                });
+                }, (url => !string.IsNullOrEmpty(url)));
             }
         }
 
@@ -90,13 +74,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<string>(async p =>
+                return new RelayCommand<string>(async coordinates =>
                 {
-                    if (!string.IsNullOrEmpty(p))
+                    if (!string.IsNullOrEmpty(coordinates))
                     {
-                        await NavigationService.NavigateTo(new Uri("bingmaps:?collection=" + System.Net.WebUtility.UrlEncode(p) + "&lvl18", UriKind.Absolute));
+                        await Launcher.LaunchUriAsync(new Uri("bingmaps:" + coordinates, UriKind.Absolute));
                     }
-                });
+                }, (coordinates => !string.IsNullOrEmpty(coordinates)));
             }
         }
 
@@ -104,13 +88,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<string>(async p =>
+                return new RelayCommand<string>(async address =>
                 {
-                    if (!string.IsNullOrEmpty(p))
+                    if (!string.IsNullOrEmpty(address))
                     {
-                        await NavigationService.NavigateTo(new Uri("bingmaps:?rtp=~adr." + p, UriKind.Absolute));
+                        await Launcher.LaunchUriAsync(new Uri("bingmaps:?rtp=~adr." + address, UriKind.Absolute));
                     }
-                });
+                }, (address => !string.IsNullOrEmpty(address)));
             }
         }
 
@@ -132,13 +116,13 @@ namespace AppStudio.Uwp.Commands
         {
             get
             {
-                return new RelayCommand<Appointment>(appointment =>
+                return new RelayCommand<Appointment>(async appointment =>
                 {
                     if (appointment != null)
                     {
-                        var s = AppointmentManager.ShowEditNewAppointmentAsync(appointment);
+                        await AppointmentManager.ShowEditNewAppointmentAsync(appointment);
                     }
-                });
+                }, (appointment => appointment != null));
             }
         }
     }

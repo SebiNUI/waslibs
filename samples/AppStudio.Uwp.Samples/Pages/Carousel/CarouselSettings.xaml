@@ -1,0 +1,71 @@
+﻿<UserControl
+    x:Class="AppStudio.Uwp.Samples.CarouselSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    xmlns:controls="using:AppStudio.Uwp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300">
+
+    <Grid
+        BorderBrush="LightGray"
+        BorderThickness="1,0,0,0">
+        <Grid.Background>
+            <SolidColorBrush
+                Color="White"
+                Opacity="0.85"/>
+        </Grid.Background>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Padding="24">
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="AspectRatio"
+                    Value="{Binding Carousel.AspectRatio, Mode=TwoWay}"
+                    Minimun="0.1"
+                    Maximun="2.0"
+                    SmallChange="0.05"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="MaxItems"
+                    Value="{Binding Carousel.MaxItems, Mode=TwoWay}"
+                    Minimun="1"
+                    Maximun="10"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="MinHeight"
+                    Value="{Binding Carousel.MinHeight, Mode=TwoWay}"
+                    Minimun="0"
+                    Maximun="800"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"                    
+                    Property="MaxHeight"
+                    Value="{Binding Carousel.MaxHeight, Mode=TwoWay}"
+                    Minimun="100"
+                    Maximun="800"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="GradientOpacity"
+                    Value="{Binding Carousel.GradientOpacity, Mode=TwoWay}"
+                    Minimun="0.0"
+                    Maximun="1.0"
+                    SmallChange="0.1"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="SlideInterval"
+                    Value="{Binding Carousel.SlideInterval, Mode=TwoWay}"
+                    Minimun="0.0"
+                    Maximun="3000.0"
+                    SmallChange="500.0"/>
+                <controls:PropertySet
+                    Source="{Binding Carousel}"
+                    Property="ArrowsVisibility"
+                    Value="{Binding Carousel.ArrowsVisibility, Mode=TwoWay}"/>
+                <TextBlock Margin="0,12,0,6" Text="Indicator" FontSize="18" />
+                <controls:PropertySet Source="{Binding Indicator}" Property="ShapeMode" Value="{Binding Indicator.ShapeMode, Mode=TwoWay}"/>
+                <controls:PropertySet Source="{Binding Indicator}" Property="Background" Value="{Binding Indicator.Background, Mode=TwoWay}"/>
+                <controls:PropertySet Source="{Binding Indicator}" Property="SelectedBackground" Value="{Binding Indicator.SelectedBackground, Mode=TwoWay}"/>
+                <controls:PropertySet Source="{Binding Indicator}" Property="PressedBackground" Value="{Binding Indicator.PressedBackground, Mode=TwoWay}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

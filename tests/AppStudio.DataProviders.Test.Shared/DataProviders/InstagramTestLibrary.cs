@@ -10,6 +10,7 @@ namespace AppStudio.DataProviders.Test.DataProviders
     [TestClass]
     public partial class InstagramTestLibrary
     {
+        [Ignore]
         [TestMethod]
         public async Task LoadInstagramTags()
         {
@@ -25,6 +26,7 @@ namespace AppStudio.DataProviders.Test.DataProviders
             Assert.IsTrue(result.Any());
         }
 
+        [Ignore]
         [TestMethod]
         public async Task LoadInstagramValidUserId()
         {
@@ -140,6 +142,70 @@ namespace AppStudio.DataProviders.Test.DataProviders
             var dataProvider = new InstagramDataProvider(OAuthKeys.InstagramValidKeys);
 
             await ExceptionsAssert.ThrowsAsync<ParserNullException>(async () => await dataProvider.LoadDataAsync<InstagramSchema>(new InstagramDataConfig(), 20, null));
+        }
+
+        [Ignore]
+        [TestMethod]
+        public async Task TestMaxRecordsTags_Min()
+        {
+            int maxRecords = 1;
+            var config = new InstagramDataConfig
+            {
+                QueryType = InstagramQueryType.Tag,
+                Query = "windowsappstudio"
+            };
+            var dataProvider = new InstagramDataProvider(OAuthKeys.InstagramValidKeys);
+            IEnumerable<InstagramSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.AreEqual(maxRecords, result.Count());
+        }
+
+        [Ignore]
+        [TestMethod]
+        public async Task TestMaxRecordsUserId_Min()
+        {
+            int maxRecords = 1;
+            var config = new InstagramDataConfig
+            {
+                QueryType = InstagramQueryType.Id,
+                Query = "239684951"
+            };
+            var dataProvider = new InstagramDataProvider(OAuthKeys.InstagramValidKeys);
+            IEnumerable<InstagramSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.AreEqual(maxRecords, result.Count());
+        }
+
+        [Ignore]
+        [TestMethod]
+        public async Task TestMaxRecordsTags()
+        {
+            int maxRecords = 30;
+            var config = new InstagramDataConfig
+            {
+                QueryType = InstagramQueryType.Tag,
+                Query = "windows"
+            };
+            var dataProvider = new InstagramDataProvider(OAuthKeys.InstagramValidKeys);
+            IEnumerable<InstagramSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.IsTrue(result.Count() > 20);
+        }
+
+        [Ignore]
+        [TestMethod]
+        public async Task TestMaxRecordsUserId()
+        {
+            int maxRecords = 30;
+            var config = new InstagramDataConfig
+            {
+                QueryType = InstagramQueryType.Id,
+                Query = "239684951"
+            };
+            var dataProvider = new InstagramDataProvider(OAuthKeys.InstagramValidKeys);
+            IEnumerable<InstagramSchema> result = await dataProvider.LoadDataAsync(config, maxRecords);
+
+            Assert.IsTrue(result.Count() > 20);
         }
     }
 }

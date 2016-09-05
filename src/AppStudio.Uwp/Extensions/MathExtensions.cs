@@ -29,6 +29,11 @@ namespace AppStudio.Uwp
 
         public static double AsDouble(this string str)
         {
+            if (str == null)
+            {
+                throw new ArgumentNullException("str");
+            }
+
             str = str.Replace(',', '.');
             double d = 0.0;
             if (!String.IsNullOrEmpty(str))
@@ -36,6 +41,11 @@ namespace AppStudio.Uwp
                 Double.TryParse(str, NumberStyles.Any, CultureInfo.InvariantCulture, out d);
             }
             return d;
+        }
+
+        public static string ToInvariantString(this double value)
+        {
+            return value.ToString("0.00", CultureInfo.InvariantCulture);
         }
     }
 }
