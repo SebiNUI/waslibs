@@ -1,0 +1,18 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:AppStudio.Uwp.Labs">
+
+    <Style TargetType="controls:ShapeImage">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ShapeImage">
+                    <Grid>
+                        <Border Name="container" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" Opacity="0.0" />
+                        <ContentPresenter Padding="{TemplateBinding Padding}" Name="content" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

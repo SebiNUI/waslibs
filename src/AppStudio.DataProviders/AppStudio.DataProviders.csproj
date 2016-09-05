@@ -12,18 +12,18 @@
     <AssemblyName>AppStudio.DataProviders</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile32</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
@@ -41,10 +41,30 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bing\BingDataConfig.cs" />
     <Compile Include="Bing\BingDataProvider.cs" />
     <Compile Include="Bing\BingParser.cs" />
+    <Compile Include="Core\AssemblyUtils.cs" />
     <Compile Include="Core\JsonParser.cs" />
     <Compile Include="Core\StringValue.cs" />
     <Compile Include="Core\ExtensionMethods.cs" />
@@ -72,12 +92,15 @@
     <Compile Include="Core\HttpRequestResult.cs" />
     <Compile Include="Core\HttpRequestSettings.cs" />
     <Compile Include="IParser.cs" />
+    <Compile Include="IParserExtensions.cs" />
     <Compile Include="LocalStorage\LocalStorageDataConfig.cs" />
     <Compile Include="LocalStorage\LocalStorageDataProvider.cs" />
     <Compile Include="Bing\BingSchema.cs" />
     <Compile Include="Facebook\FacebookSchema.cs" />
     <Compile Include="Flickr\FlickrSchema.cs" />
     <Compile Include="Core\HttpRequest.cs" />
+    <Compile Include="RestApi\RestApiDataConfig.cs" />
+    <Compile Include="RestApi\RestApiDataProvider.cs" />
     <Compile Include="Rss\RssDataConfig.cs" />
     <Compile Include="Rss\RssDataProvider.cs" />
     <Compile Include="Html\HtmlSchema.cs" />
@@ -85,6 +108,7 @@
     <Compile Include="Menu\MenuSchema.cs" />
     <Compile Include="Rss\RssParser.cs" />
     <Compile Include="Rss\RssSchema.cs" />
+    <Compile Include="SortDirection.cs" />
     <Compile Include="Twitter\TwitterParser.cs" />
     <Compile Include="Twitter\TwitterDataConfig.cs" />
     <Compile Include="Twitter\TwitterDataProvider.cs" />
@@ -116,10 +140,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <TargetPlatform Include="Windows, Version=8.1" />
-    <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
-  </ItemGroup>
-  <ItemGroup>
     <CodeAnalysisDictionary Include="Dictionary.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -128,7 +148,7 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

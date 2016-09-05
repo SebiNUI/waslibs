@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI;
+
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -40,8 +40,45 @@ namespace AppStudio.Uwp
             }
         }
 
+        public static Storyboard AnimateScaleX(this FrameworkElement element, double x, double duration = 150, EasingFunctionBase easingFunction = null)
+        {
+            if (element.GetScaleX() != x)
+            {
+                return AnimateDoubleProperty(element.GetCompositeTransform(), "ScaleX", element.GetScaleX(), x, duration, easingFunction);
+            }
+            return null;
+        }
+        public static async Task AnimateScaleXAsync(this FrameworkElement element, double x, double duration = 150, EasingFunctionBase easingFunction = null)
+        {
+            if (element.GetScaleX() != x)
+            {
+                await AnimateDoublePropertyAsync(element.GetCompositeTransform(), "ScaleX", element.GetScaleX(), x, duration, easingFunction);
+            }
+        }
+
+        public static Storyboard AnimateScaleY(this FrameworkElement element, double y, double duration = 150, EasingFunctionBase easingFunction = null)
+        {
+            if (element.GetScaleY() != y)
+            {
+                return AnimateDoubleProperty(element.GetCompositeTransform(), "ScaleY", element.GetScaleY(), y, duration, easingFunction);
+            }
+            return null;
+        }
+        public static async Task AnimateScaleYAsync(this FrameworkElement element, double y, double duration = 150, EasingFunctionBase easingFunction = null)
+        {
+            if (element.GetScaleY() != y)
+            {
+                await AnimateDoublePropertyAsync(element.GetCompositeTransform(), "ScaleY", element.GetScaleY(), y, duration, easingFunction);
+            }
+        }
+
         public static Storyboard AnimateWidth(this FrameworkElement element, double width, double duration = 250, EasingFunctionBase easingFunction = null)
         {
+            if(element == null)
+            {
+                throw new ArgumentNullException("element");
+            }
+
             if (element.ActualWidth != width)
             {
                 return AnimateDoubleProperty(element, "Width", element.ActualWidth, width, duration, easingFunction);
@@ -58,6 +95,10 @@ namespace AppStudio.Uwp
 
         public static Storyboard AnimateHeight(this FrameworkElement element, double height, double duration = 250, EasingFunctionBase easingFunction = null)
         {
+            if(element == null)
+            {
+                throw new ArgumentNullException("element");
+            }
             if (element.Height != height)
             {
                 return AnimateDoubleProperty(element, "Height", element.ActualHeight, height, duration, easingFunction);
@@ -74,6 +115,10 @@ namespace AppStudio.Uwp
 
         public static Storyboard FadeIn(this UIElement element, double duration = 250, EasingFunctionBase easingFunction = null)
         {
+            if (element == null)
+            {
+                throw new ArgumentNullException("element");
+            }
             if (element.Opacity < 1.0)
             {
                 return AnimateDoubleProperty(element, "Opacity", element.Opacity, 1.0, duration, easingFunction);
@@ -90,6 +135,10 @@ namespace AppStudio.Uwp
 
         public static Storyboard FadeOut(this UIElement element, double duration = 250, EasingFunctionBase easingFunction = null)
         {
+            if (element == null)
+            {
+                throw new ArgumentNullException("element");
+            }
             if (element.Opacity > 0.0)
             {
                 return AnimateDoubleProperty(element, "Opacity", element.Opacity, 0.0, duration, easingFunction);

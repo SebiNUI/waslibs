@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using AppStudio.DataProviders.Core;
+
 using Newtonsoft.Json;
+
+using AppStudio.DataProviders.Core;
 
 namespace AppStudio.DataProviders.Twitter
 {
@@ -26,34 +28,51 @@ namespace AppStudio.DataProviders.Twitter
     {
         public static TwitterSchema Parse(this TwitterTimelineItem item)
         {
-            TwitterSchema tweet = new TwitterSchema
+            TwitterSchema tweet = new TwitterSchema()
             {
-                _id = item.Id,
-                CreationDateTime = TryParse(item.CreatedAt)
+                _id = item.Id
             };
-            
-            if (item.User == null)
+            FillUserData(ref tweet, item);
+            FillTweet(ref tweet, item);
+            return tweet;
+        }
+
+        private static void FillUserData(ref TwitterSchema tweet, TwitterTimelineItem item)
+        {
+            TwitterUser user = null;
+            if (item.RetweetedStatus != null)
             {
-                tweet.UserId = string.Empty;
-                tweet.UserName = string.Empty;
-                tweet.UserScreenName = string.Empty;
-                tweet.UserProfileImageUrl = string.Empty;
-                tweet.Url = string.Empty;
+                user = item.RetweetedStatus.User;                
+                tweet.UserName = $"{item.RetweetedStatus.User.Name.DecodeHtml()} (RT @{item.User.ScreenName.DecodeHtml()})";                                
+            }
+            else if (item.User != null)
+            {
+                user = item.User;                
+                tweet.UserName = item.User.Name.DecodeHtml();                
+            }
+
+            tweet.UserId = user.Id;
+            tweet.UserScreenName = string.Concat("@", user.ScreenName.DecodeHtml());
+            tweet.UserProfileImageUrl = user.ProfileImageUrl;
+            tweet.Url = string.Format("https://twitter.com/{0}/status/{1}", user.ScreenName, item.Id);
+            if (!string.IsNullOrEmpty(tweet.UserProfileImageUrl))
+            {
+                tweet.UserProfileImageUrl = tweet.UserProfileImageUrl.Replace("_normal", string.Empty);
+            }
+        }
+
+        private static void FillTweet(ref TwitterSchema tweet, TwitterTimelineItem item)
+        {
+            string text;
+            if (item.RetweetedStatus == null)
+            {
+                text = item.Text;
             }
             else
             {
-                tweet.UserId = item.User.Id;
-                tweet.UserName = item.User.Name.DecodeHtml();
-                tweet.UserScreenName = string.Concat("@", item.User.ScreenName.DecodeHtml());
-                tweet.UserProfileImageUrl = item.User.ProfileImageUrl;
-                tweet.Url = string.Format("https://twitter.com/{0}/status/{1}", item.User.ScreenName, item.Id);
-                if (!string.IsNullOrEmpty(tweet.UserProfileImageUrl))
-                {
-                    tweet.UserProfileImageUrl = tweet.UserProfileImageUrl.Replace("_normal", string.Empty);
-                }
+                text = item.RetweetedStatus.Text;                
             }
-
-            var text = item.Text;
+            
             if (item.Entities?.Urls?.Count > 0)
             {
                 foreach (TwitterUrl url in item.Entities.Urls)
@@ -69,9 +88,9 @@ namespace AppStudio.DataProviders.Twitter
                     }
                 }
             }
-            
+
             if (item.Entities?.Media?.Count > 0)
-            {     
+            {
                 foreach (TwitterMedia media in item.Entities.Media)
                 {
                     text = text.Replace(media.Url, string.Empty);
@@ -80,14 +99,15 @@ namespace AppStudio.DataProviders.Twitter
                     {
                         tweet.ImageUrl = new Uri(media.MediaUrl);
                     }
-                   
+
                 }
             }
 
-            // a '\n' could be at thye end of the tweet if we removed a Twitter video
+            // a '\n' could be at the end of the tweet if we removed a Twitter video
             tweet.Text = text.TrimEnd('\n').DecodeHtml();
 
-            return tweet;
+
+            tweet.CreationDateTime = TryParse(item.CreatedAt);
         }
 
         private static DateTime TryParse(string dateTime)
@@ -112,6 +132,7 @@ namespace AppStudio.DataProviders.Twitter
             }
 
             var result = JsonConvert.DeserializeObject<TwitterTimelineItem[]>(data);
+
             return result.Select(r => r.Parse()).ToList();
         }
     }
@@ -130,8 +151,31 @@ namespace AppStudio.DataProviders.Twitter
         [JsonProperty("user")]
         public TwitterUser User { get; set; }
 
-        [JsonProperty("entities")]
+        [JsonProperty("retweeted_status")]
+        public TwitterTimelineItem RetweetedStatus { get; set; }
+
+		[JsonProperty("entities")]
         public TwitterEntity Entities { get; set; }
+    }
+
+    public class TwitterUser
+    {
+        [JsonProperty("id_str")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("screen_name")]
+        public string ScreenName { get; set; }
+
+        [JsonProperty("profile_image_url")]
+        public string ProfileImageUrl { get; set; }
+    }
+
+    internal class TwitterSearchResult
+    {
+        public TwitterTimelineItem[] statuses { get; set; }
     }
 
     public class TwitterEntity
@@ -248,25 +292,4 @@ namespace AppStudio.DataProviders.Twitter
         public Sizes Sizes { get; set; }
     }
 
- 
-
-    public class TwitterUser
-    {
-        [JsonProperty("id_str")]
-        public string Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("screen_name")]
-        public string ScreenName { get; set; }
-
-        [JsonProperty("profile_image_url")]
-        public string ProfileImageUrl { get; set; }
-    }
-
-    internal class TwitterSearchResult
-    {
-        public TwitterTimelineItem[] statuses { get; set; }
-    }
 }

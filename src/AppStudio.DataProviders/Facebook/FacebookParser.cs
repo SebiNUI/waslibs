@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using AppStudio.DataProviders.Core;
+
 using Newtonsoft.Json;
+
+using AppStudio.DataProviders.Core;
 
 namespace AppStudio.DataProviders.Facebook
 {
@@ -14,7 +16,7 @@ namespace AppStudio.DataProviders.Facebook
         {
             Collection<FacebookSchema> resultToReturn = new Collection<FacebookSchema>();
             var searchList = JsonConvert.DeserializeObject<FacebookGraphResponse>(data);
-            foreach (var i in searchList.data.Where(w => !string.IsNullOrEmpty(w.message) && !string.IsNullOrEmpty(w.link)).OrderByDescending(o => o.created_time))
+            foreach (var i in searchList.data.Where(w => !string.IsNullOrEmpty(w.message)).OrderByDescending(o => o.created_time))
             {
                 var item = new FacebookSchema
                 {
@@ -24,9 +26,9 @@ namespace AppStudio.DataProviders.Facebook
                     Title = i.message.DecodeHtml(),
                     Summary = i.message.DecodeHtml(),
                     Content = i.message,
-                    ImageUrl = i.picture,
+                    ImageUrl = ConvertImageUrlFromParameter(i.full_picture),
+                    FeedUrl = BuildFeedUrl(i.from.id, i.id, i.link),
                     FullImageUrl = i.full_picture,
-                    FeedUrl = i.link,
                     Source = i.source
                 };
                 resultToReturn.Add(item);
@@ -61,11 +63,31 @@ namespace AppStudio.DataProviders.Facebook
 
             return parsedImageUrl;
         }
+
+        private static string BuildFeedUrl(string authorId, string id, string link)
+        {
+            if (!string.IsNullOrEmpty(link))
+            {
+                return link;
+            }
+
+            const string baseUrl = "https://www.facebook.com";
+            var Ids = id.Split('_');
+            if (Ids.Length > 1)
+            {
+                var postId = id.Split('_')[1];
+                return $"{baseUrl}/{authorId}/posts/{postId}";
+            }
+
+            return $"{baseUrl}/{authorId}";
+        }
     }
 
     internal class FacebookGraphResponse
     {
         public GraphData[] data { get; set; }
+
+        public Paging paging { get; set; }
     }
 
     internal class From
@@ -87,5 +109,11 @@ namespace AppStudio.DataProviders.Facebook
         public string full_picture { get; set; }
         public string link { get; set; }
         public string source { get; set; }
+    }
+
+    internal class Paging
+    {
+        public string previous { get; set; }
+        public string next { get; set; }
     }
 }

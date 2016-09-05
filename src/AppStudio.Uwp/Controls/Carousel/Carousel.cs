@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.Foundation;
 
@@ -13,118 +10,105 @@ namespace AppStudio.Uwp.Controls
 {
     public sealed partial class Carousel : Control
     {
-        private Panel _container = null;
-        private Button _prevArrow = null;
-        private Button _nextArrow = null;
+        private Panel _frame = null;
+        private CarouselPanel _panel = null;
 
-        private RectangleGeometry _clip = null;
+        private Grid _arrows = null;
+        private Button _left = null;
+        private Button _right = null;
 
-        private List<object> _items = null;
-        private LinearGradientBrush _gradient = null;
+        private LinearGradientBrush _gradient;
+        private RectangleGeometry _clip;
 
         public Carousel()
         {
-            _items = new List<object>();
             this.DefaultStyleKey = typeof(Carousel);
+            this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
+            this.SizeChanged += OnSizeChanged;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            CreateFadeTimer();
+            if (_slideTimer != null && this.SlideInterval > 150.0)
+            {
+                _slideTimer.Start();
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DisposeFadeTimer();
+            if (_slideTimer != null)
+            {
+                _slideTimer.Stop();
+            }
         }
 
         protected override void OnApplyTemplate()
         {
-            _container = base.GetTemplateChild("container") as Panel;
-            _prevArrow = base.GetTemplateChild("prevArrow") as Button;
-            _nextArrow = base.GetTemplateChild("nextArrow") as Button;
+            _frame = base.GetTemplateChild("frame") as Panel;
+            _panel = base.GetTemplateChild("panel") as CarouselPanel;
+
+            _arrows = base.GetTemplateChild("arrows") as Grid;
+            _left = base.GetTemplateChild("left") as Button;
+            _right = base.GetTemplateChild("right") as Button;
 
             _gradient = base.GetTemplateChild("gradient") as LinearGradientBrush;
             _clip = base.GetTemplateChild("clip") as RectangleGeometry;
 
-            this.BuildSlots();
-            this.ItemsSourceChanged(this.ItemsSource as IEnumerable);
+            _frame.ManipulationDelta += OnManipulationDelta;
+            _frame.ManipulationCompleted += OnManipulationCompleted;
+            _frame.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.System;
 
-            _container.ManipulationInertiaStarting += OnManipulationInertiaStarting;
-            _container.ManipulationDelta += OnManipulationDelta;
-            _container.ManipulationCompleted += OnManipulationCompleted;
-            _container.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateInertia | ManipulationModes.System;
-
-            _prevArrow.Click += OnPrevArrowClick;
-            _nextArrow.Click += OnNextArrowClick;
-
-            this.SizeChanged += OnSizeChanged;
+            _frame.PointerMoved += OnPointerMoved;
+            _left.Click += OnLeftClick;
+            _right.Click += OnRightClick;
+            _left.PointerEntered += OnArrowPointerEntered;
+            _left.PointerExited += OnArrowPointerExited;
+            _right.PointerEntered += OnArrowPointerEntered;
+            _right.PointerExited += OnArrowPointerExited;
 
             base.OnApplyTemplate();
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            double contentWidth = availableSize.Width;
-            double width = contentWidth / MaxItems;
-            double height = width / AspectRatio;
+            availableSize = NormalizeSize(availableSize);
+
+            double width = availableSize.Width / this.MaxItems;
+            double height = width / this.AspectRatio;
+
             if (height < MinHeight)
             {
                 height = MinHeight;
-                width = height * AspectRatio;
+                width = height * this.AspectRatio;
             }
+
             if (height > MaxHeight)
             {
                 height = MaxHeight;
-                width = height * AspectRatio;
+                width = height * this.AspectRatio;
             }
-            var size = new Size(width, height);
-            base.MeasureOverride(size);
-            return size;
+
+            _panel.ItemWidth = Math.Round(width);
+            _panel.ItemHeight = Math.Round(height);
+
+            this.Position = -this.Index * width;
+
+            return base.MeasureOverride(new Size(availableSize.Width, height));
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var size = base.ArrangeOverride(finalSize);
-
-            double slotWidth = Math.Round(Math.Min(size.Width, Math.Max(_container.ActualWidth / (double)MaxItems, size.Height * AspectRatio)), 2);
-            double factor = Math.Round(_slotWidth / slotWidth, 2);
-            factor = factor == 0 ? 1 : factor;
-            _slotWidth = Math.Round(slotWidth, 2);
-            _offset = Math.Round((_offset / factor).Mod(_slotWidth), 2);
-
-            var positions = GetPositions(_slotWidth).ToArray();
-            var controls = _container.Children.Cast<CarouselSlot>().OrderBy(r => r.X).ToArray();
-            for (int n = 0; n < controls.Length; n++)
-            {
-                var position = positions[n];
-                var control = controls[n];
-                control.MoveX(position.X + _offset);
-                control.Width = _slotWidth;
-                control.Height = _container.ActualHeight;
-            }
-
-            return size;
-        }
-
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            _prevArrow.FadeIn(500.0);
-            _nextArrow.FadeIn(500.0);
-            base.OnPointerEntered(e);
-        }
-        protected override void OnPointerExited(PointerRoutedEventArgs e)
-        {
-            _prevArrow.FadeOut(500.0);
-            _nextArrow.FadeOut(500.0);
-            base.OnPointerExited(e);
-        }
-
-        private void OnPrevArrowClick(object sender, RoutedEventArgs e)
-        {
-            this.AnimatePrev();
-        }
-        private void OnNextArrowClick(object sender, RoutedEventArgs e)
-        {
-            this.AnimateNext();
+            return base.ArrangeOverride(new Size(finalSize.Width, _panel.ItemHeight));
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _prevArrow.Height = e.NewSize.Height;
-            _nextArrow.Height = e.NewSize.Height;
+            _clip.Rect = new Rect(new Point(), e.NewSize);
             ApplyGradient();
-            _clip.Rect = new Rect(new Point(), _container.GetSize());
         }
 
         private void ApplyGradient()
@@ -143,5 +127,42 @@ namespace AppStudio.Uwp.Controls
                 _gradient.GradientStops[2].Offset = factor * (index + count);
             }
         }
+
+        #region NormalizeSize
+        private static Size NormalizeSize(Size size)
+        {
+            double width = size.Width;
+            double height = size.Height;
+
+            if (double.IsInfinity(width))
+            {
+                width = Window.Current.Bounds.Width;
+            }
+            if (double.IsInfinity(height))
+            {
+                height = Window.Current.Bounds.Height;
+            }
+
+            return new Size(width, height);
+        }
+        #endregion
+
+        #region Move between items
+        public void MoveBack()
+        {
+            if (_isBusy)
+                return;
+            _panel.TranslateDeltaX(0.01);
+            AnimatePrev();
+        }
+
+        public void MoveForward()
+        {
+            if (_isBusy)
+                return;
+            _panel.TranslateDeltaX(-0.01);
+            AnimateNext();
+        }
+        #endregion
     }
 }
