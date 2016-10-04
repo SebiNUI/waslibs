@@ -28,8 +28,8 @@ namespace AppStudio.DataProviders.Facebook
                     Content = i.message,
                     ImageUrl = ConvertImageUrlFromParameter(i.full_picture),
                     FeedUrl = BuildFeedUrl(i.from.id, i.id, i.link),
-                    FullImageUrl = i.full_picture,
-                    Source = i.source
+                    Source = i.source,
+                    ProfileImageUrl = string.Format("https://graph.facebook.com/v2.5/{0}/picture?type=large&redirect=true", i.from.id)
                 };
                 resultToReturn.Add(item);
             }
