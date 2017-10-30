@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using AppStudio.DataProviders.Bing;
 
 namespace AppStudio.DataProviders.Core
 {

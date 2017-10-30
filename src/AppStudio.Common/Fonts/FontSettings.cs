@@ -1,5 +1,5 @@
-﻿using System;
-using AppStudio.Common.Commands;
+﻿using AppStudio.Common.Commands;
+using System;
 using Windows.Storage;
 
 namespace AppStudio.Common.Fonts

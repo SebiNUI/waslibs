@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-using Newtonsoft.Json;
 
 namespace AppStudio.DataProviders.YouTube
 {

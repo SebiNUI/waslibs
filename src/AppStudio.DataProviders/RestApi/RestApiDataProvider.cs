@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http;
-
-using AppStudio.DataProviders.Core;
+﻿using AppStudio.DataProviders.Core;
 using AppStudio.DataProviders.Exceptions;
-using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AppStudio.DataProviders.RestApi
 {

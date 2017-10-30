@@ -9,7 +9,7 @@ namespace AppStudio.Common.Controls
 {
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    
+
     /// <summary>
     /// This class implement a GridView with dynamic columns and rows.
     /// </summary>

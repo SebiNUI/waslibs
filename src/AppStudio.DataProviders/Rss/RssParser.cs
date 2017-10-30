@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using AppStudio.DataProviders.Core;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using AppStudio.DataProviders.Core;
 
 namespace AppStudio.DataProviders.Rss
 {

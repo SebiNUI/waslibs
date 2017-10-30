@@ -138,7 +138,8 @@
     <Compile Include="Html\HtmlParser.cs" />
     <Compile Include="Instagram\InstagramDataConfig.cs" />
     <Compile Include="Instagram\InstagramDataProvider.cs" />
-    <Compile Include="Instagram\InstagramParser.cs" />
+    <Compile Include="Instagram\InstagramUsernameParser.cs" />
+    <Compile Include="Instagram\InstagramTagParser.cs" />
     <Compile Include="Core\HttpRequestResult.cs" />
     <Compile Include="Core\HttpRequestSettings.cs" />
     <Compile Include="IParser.cs" />

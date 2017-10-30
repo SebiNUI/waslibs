@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 
 namespace AppStudio.DataProviders.Instagram
 {
@@ -16,5 +15,7 @@ namespace AppStudio.DataProviders.Instagram
         public DateTime Published { get; set; }
 
         public string Author { get; set; }
+
+        public string UserName { get; set; }
     }
 }

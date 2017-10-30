@@ -1,20 +1,17 @@
-﻿using System;
+﻿using AppStudio.DataProviders.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.IO.Compression;
-
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-
-using AppStudio.DataProviders.Exceptions;
-using Newtonsoft.Json;
 
 namespace AppStudio.DataProviders.Twitter
 {

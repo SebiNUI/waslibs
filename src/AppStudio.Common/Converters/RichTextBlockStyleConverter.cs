@@ -7,10 +7,10 @@
 
 namespace AppStudio.Common.Converters
 {
+    using AppStudio.Common.Fonts;
     using System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
-    using AppStudio.Common.Fonts;
 
     /// <summary>
     /// This class converts a FontSize value into a a Style.

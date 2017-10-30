@@ -1,7 +1,6 @@
-﻿using System;
+﻿using AppStudio.DataProviders.Rss;
 using System.Collections.Generic;
 using System.Linq;
-using AppStudio.DataProviders.Rss;
 
 namespace AppStudio.DataProviders.Bing
 {

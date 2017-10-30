@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Windows.Web.Http;
-using System.Threading.Tasks;
-using AppStudio.DataProviders.Core;
+﻿using AppStudio.DataProviders.Core;
 using AppStudio.DataProviders.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Web.Http;
 
 namespace AppStudio.DataProviders.Instagram
 {
     public class InstagramDataProvider : DataProviderBase<InstagramDataConfig, InstagramSchema>
     {
-        private const string BaseUrl = "https://api.instagram.com/v1";
+        private const string BaseUrl = "https://www.instagram.com/{0}/?__a=1";
 
         private InstagramOAuthTokens _tokens;
 
@@ -49,7 +49,14 @@ namespace AppStudio.DataProviders.Instagram
 
         protected override IParser<InstagramSchema> GetDefaultParserInternal(InstagramDataConfig config)
         {
-            return new InstagramParser();
+            if (config.QueryType == InstagramQueryType.Id)
+            {
+                return new InstagramUsernameParser();
+            }
+            else
+            {
+                return new InstagramTagParser();
+            }
         }
 
         protected override Task<IEnumerable<TSchema>> GetMoreDataAsync<TSchema>(InstagramDataConfig config, int pageSize, IParser<TSchema> parser)
@@ -81,11 +88,11 @@ namespace AppStudio.DataProviders.Instagram
         {
             if (config.QueryType == InstagramQueryType.Tag)
             {
-                return new Uri($"{BaseUrl}/tags/{config.Query}/media/recent?client_id={_tokens.ClientId}&count={maxRecords}");
+                return new Uri(string.Format(BaseUrl, $"explore/tags/{config.Query}"));
             }
             else
             {
-                return new Uri($"{BaseUrl}/users/{config.Query}/media/recent/?client_id={_tokens.ClientId}&count={maxRecords}");
+                return new Uri(string.Format(BaseUrl, $"{config.Query}"));
             }
         }
     }

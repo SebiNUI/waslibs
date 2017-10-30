@@ -1,5 +1,4 @@
 using System;
-using AppStudio.DataProviders.Core;
 
 namespace AppStudio.DataProviders.Rss
 {

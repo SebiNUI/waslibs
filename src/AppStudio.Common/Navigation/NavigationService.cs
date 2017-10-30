@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AppStudio.Common.Commands;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using AppStudio.Common.Commands;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 

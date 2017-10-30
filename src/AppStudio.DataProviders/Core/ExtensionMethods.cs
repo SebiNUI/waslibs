@@ -7,14 +7,14 @@
 
 namespace AppStudio.DataProviders.Core
 {
+    using AppStudio.DataProviders.Bing;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
     using System.Reflection;
     using System.Text.RegularExpressions;
-    using AppStudio.DataProviders.Bing;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Collections.Generic;
     /// <summary>
     /// This class offers general purpose methods.
     /// </summary>

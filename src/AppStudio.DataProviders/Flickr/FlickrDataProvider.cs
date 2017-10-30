@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AppStudio.DataProviders.Core;
+using AppStudio.DataProviders.Exceptions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AppStudio.DataProviders.Core;
-using AppStudio.DataProviders.Exceptions;
-using System.Linq;
 
 namespace AppStudio.DataProviders.Flickr
 {

@@ -1,12 +1,10 @@
-﻿using System;
+﻿using AppStudio.DataProviders.Core;
+using AppStudio.DataProviders.Exceptions;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Web.Http;
-
-using Newtonsoft.Json;
-
-using AppStudio.DataProviders.Core;
-using AppStudio.DataProviders.Exceptions;
 
 namespace AppStudio.DataProviders.YouTube
 {

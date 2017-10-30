@@ -7,9 +7,9 @@
 
 namespace AppStudio.Common.Commands
 {
+    using AppStudio.Common.Navigation;
     using System;
     using System.Windows.Input;
-    using AppStudio.Common.Navigation;
     using Windows.ApplicationModel.DataTransfer;
 
     /// <summary>
